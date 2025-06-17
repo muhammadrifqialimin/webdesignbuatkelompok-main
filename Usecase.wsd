@@ -1,0 +1,15 @@
+@startuml
+left to right direction
+
+actor Pengunjung
+
+rectangle Website {
+    Pengunjung -- (Intro)
+    Pengunjung -- (Members)
+    Pengunjung -- (About)
+    Pengunjung -- (Contact)
+    Pengunjung -- (Play/Mute Musik)
+    (Contact) <.. (Kirim Pesan) : <<extend>>
+
+}
+@enduml

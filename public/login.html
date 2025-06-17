@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login Admin - Kelompok 4</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      /* Menyesuaikan z-index video agar di belakang konten */
+      #bg-video-login {
+        position: fixed; /* atau absolute jika parentnya relative dan full screen */
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* Memastikan video menutupi seluruh area */
+        z-index: -10; /* Video di belakang semua elemen lain */
+      }
+    </style>
+  </head>
+  <body class="relative min-h-screen">
+    <video autoplay muted loop playsinline id="bg-video-login">
+      <source src="assets/video/Ep032.mp4" type="video/mp4" />
+      Browser Anda tidak mendukung tag video.
+    </video>
+
+    <div
+      class="flex items-center justify-center min-h-screen bg-black bg-opacity-60 p-4"
+    >
+      <div class="bg-white p-8 md:p-10 rounded-lg shadow-2xl w-full max-w-md">
+        <img
+          src="assets/fanteses.jpg"
+          alt="Logo Kelompok 4"
+          class="w-20 h-20 mx-auto mb-6 rounded-full shadow-md"
+        />
+        <h2 class="text-3xl font-bold text-center text-gray-800 mb-8">
+          Admin Login
+        </h2>
+        <form id="loginForm">
+          <div class="mb-5">
+            <label
+              for="username"
+              class="block text-sm font-medium text-gray-700 mb-1"
+              >Username</label
+            >
+            <input
+              type="text"
+              id="username"
+              name="username"
+              required
+              class="w-full px-4 py-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 placeholder-gray-400"
+              placeholder="Masukkan username"
+            />
+          </div>
+          <div class="mb-6">
+            <label
+              for="password"
+              class="block text-sm font-medium text-gray-700 mb-1"
+              >Password</label
+            >
+            <input
+              type="password"
+              id="password"
+              name="password"
+              required
+              class="w-full px-4 py-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 placeholder-gray-400"
+              placeholder="Masukkan password"
+            />
+          </div>
+          <div
+            id="errorMessage"
+            class="mb-4 text-red-600 text-sm font-medium text-center"
+          ></div>
+          <div>
+            <button
+              type="submit"
+              class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 transition duration-150 ease-in-out transform hover:scale-105"
+            >
+              Login
+            </button>
+          </div>
+        </form>
+        <p class="text-center text-xs text-gray-500 mt-8">
+          <a
+            href="index.html"
+            class="hover:underline text-indigo-600 hover:text-indigo-800"
+            >Kembali ke Halaman Utama</a
+          >
+        </p>
+      </div>
+    </div>
+
+    <script>
+      document
+        .getElementById("loginForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault(); // Mencegah form submit secara default
+
+          const usernameInput = document.getElementById("username");
+          const passwordInput = document.getElementById("password");
+          const errorMessageDiv = document.getElementById("errorMessage");
+
+          const username = usernameInput.value;
+          const password = passwordInput.value;
+
+          // --- PERHATIAN KEAMANAN ---
+          // Kredensial ini disimpan di sisi klien (hardcoded).
+          // Ini SANGAT TIDAK AMAN untuk aplikasi produksi.
+          // Dalam aplikasi nyata, verifikasi harus dilakukan di sisi server.
+          const validUsername = "admin"; // Ganti dengan username yang Anda inginkan
+          const validPassword = "password123"; // Ganti dengan password yang Anda inginkan
+
+          if (username === validUsername && password === validPassword) {
+            errorMessageDiv.textContent = "";
+            // Simpan status login di localStorage (sederhana, tidak aman untuk produksi)
+            localStorage.setItem("isAdminLoggedIn", "true");
+            alert("Login berhasil! Mengarahkan ke halaman admin...");
+            window.location.href = "admin-dashboard.html"; // Arahkan ke dashboard admin
+          } else {
+            errorMessageDiv.textContent =
+              "Username atau password salah. Silakan coba lagi.";
+            passwordInput.value = ""; // Kosongkan field password untuk keamanan
+            usernameInput.focus(); // Fokus kembali ke field username
+          }
+        });
+    </script>
+  </body>
+</html>

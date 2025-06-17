@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard - Kelompok 4</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      body {
+        background-color: #111827; /* bg-gray-900 */
+        color: #e5e7eb; /* text-gray-200 */
+      }
+      .content-area {
+        min-height: calc(
+          100vh - 128px
+        ); /* Tinggi viewport dikurangi tinggi header & footer */
+      }
+      .member-item-admin {
+        background-color: #1f2937;
+        border: 1px solid #374151;
+        transition: background-color 0.2s;
+      }
+      .member-item-admin:hover {
+        background-color: #374151;
+      }
+      #memberFormModal {
+        z-index: 50;
+      }
+    </style>
+  </head>
+  <body class="flex flex-col min-h-screen">
+    <nav class="bg-gray-800 shadow-lg">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <div class="flex items-center">
+            <img
+              src="assets/fanteses.jpg"
+              alt="Logo"
+              class="h-10 w-10 rounded-full mr-3"
+            />
+            <span class="font-bold text-xl text-white"
+              >Admin Panel - Kelompok 4</span
+            >
+          </div>
+          <div>
+            <a
+              href="index.html"
+              class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+              >Lihat Website</a
+            >
+            <button
+              id="logoutButton"
+              class="ml-4 bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-md text-sm font-medium"
+            >
+              Logout
+            </button>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <main class="flex-grow container mx-auto p-6 md:p-8 content-area">
+      <header class="mb-10 text-center">
+        <h1 class="text-4xl font-bold text-white">Admin Dashboard</h1>
+        <p class="text-lg text-gray-400 mt-2">
+          Selamat datang, Admin! Kelola member website dari sini.
+        </p>
+      </header>
+
+      <section
+        id="member-management"
+        class="bg-gray-800 p-6 rounded-lg shadow-xl"
+      >
+        <div
+          class="flex justify-between items-center border-b border-gray-700 pb-3 mb-6"
+        >
+          <h2 class="text-2xl font-semibold text-white">Manajemen Member</h2>
+          <button
+            id="openAddMemberModalBtn"
+            class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-150"
+          >
+            Tambah Member Baru
+          </button>
+        </div>
+
+        <div id="adminMemberListContainer" class="space-y-3"></div>
+      </section>
+    </main>
+
+    <footer class="bg-gray-800 text-center py-6">
+      <p class="text-sm text-gray-500">
+        &copy; <span id="currentYear"></span> Kelompok 4 - Admin Panel.
+      </p>
+    </footer>
+
+    <div
+      id="memberFormModal"
+      class="fixed inset-0 bg-gray-900 bg-opacity-80 overflow-y-auto h-full w-full flex items-center justify-center hidden"
+    >
+      <div
+        class="bg-gray-800 p-6 md:p-8 rounded-lg shadow-2xl w-full max-w-lg text-white border border-gray-700"
+      >
+        <div class="flex justify-between items-center mb-6">
+          <h3 id="modalTitle" class="text-2xl font-semibold">
+            Tambah Member Baru
+          </h3>
+          <button
+            id="closeMemberFormModalBtn"
+            class="text-gray-400 hover:text-white text-3xl"
+          >
+            ×
+          </button>
+        </div>
+        <form id="memberForm" enctype="multipart/form-data">
+          <input type="hidden" id="memberEditId" name="memberEditId" />
+          <div class="mb-4">
+            <label
+              for="memberName"
+              class="block text-sm font-medium mb-1 text-gray-300"
+              >Nama</label
+            >
+            <input
+              type="text"
+              id="memberName"
+              name="memberName"
+              required
+              class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-500"
+              placeholder="Masukkan nama member"
+            />
+          </div>
+          <div class="mb-4">
+            <label
+              for="memberQuote"
+              class="block text-sm font-medium mb-1 text-gray-300"
+              >Kutipan</label
+            >
+            <input
+              type="text"
+              id="memberQuote"
+              name="memberQuote"
+              required
+              class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md placeholder-gray-500"
+              placeholder="Kutipan member"
+            />
+          </div>
+          <div class="mb-4">
+            <label
+              for="memberImage"
+              class="block text-sm font-medium mb-1 text-gray-300"
+              >Upload Gambar</label
+            >
+            <input
+              type="file"
+              id="memberImage"
+              name="memberImage"
+              accept="image/*"
+              class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white"
+            />
+          </div>
+          <div class="mb-4">
+            <label
+              for="memberDetails"
+              class="block text-sm font-medium mb-1 text-gray-300"
+              >Detail</label
+            >
+            <textarea
+              id="memberDetails"
+              name="memberDetails"
+              rows="3"
+              required
+              class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md placeholder-gray-500"
+              placeholder="Deskripsi atau detail tentang member"
+            ></textarea>
+          </div>
+          <div class="flex justify-end space-x-4 mt-8">
+            <button
+              type="button"
+              id="cancelMemberFormBtn"
+              class="px-5 py-2.5 bg-gray-600 hover:bg-gray-500 rounded-md font-medium"
+            >
+              Batal
+            </button>
+            <button
+              type="submit"
+              id="saveMemberButton"
+              class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 rounded-md font-medium"
+            >
+              Simpan
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      let membersData = [];
+      let currentEditId = null;
+
+      // Mengambil elemen-elemen DOM
+      const memberFormModal = document.getElementById("memberFormModal");
+      const modalTitleElement = document.getElementById("modalTitle");
+      const memberForm = document.getElementById("memberForm");
+      const memberEditIdInput = document.getElementById("memberEditId");
+      const memberNameInput = document.getElementById("memberName");
+      const memberQuoteInput = document.getElementById("memberQuote");
+      const memberImageInput = document.getElementById("memberImage");
+      const memberDetailsInput = document.getElementById("memberDetails");
+      const openAddMemberModalBtn = document.getElementById(
+        "openAddMemberModalBtn"
+      );
+      const closeMemberFormModalBtn = document.getElementById(
+        "closeMemberFormModalBtn"
+      );
+      const cancelMemberFormBtn = document.getElementById(
+        "cancelMemberFormBtn"
+      );
+
+      // Memuat data member dari server
+      async function loadMembersDataFromServer() {
+        try {
+          const res = await fetch("/api/members");
+          if (!res.ok) throw new Error("Gagal mengambil data dari server");
+          membersData = await res.json();
+          renderAdminMemberList();
+        } catch (err) {
+          console.error(err);
+          alert("Tidak dapat memuat data member. Pastikan server berjalan.");
+        }
+      }
+
+      // Merender daftar member ke halaman
+      function renderAdminMemberList() {
+        const memberListContainer = document.getElementById(
+          "adminMemberListContainer"
+        );
+        memberListContainer.innerHTML = "";
+        if (membersData.length === 0) {
+          memberListContainer.innerHTML =
+            '<p class="text-gray-500 text-center">Belum ada data member.</p>';
+          return;
+        }
+        membersData.forEach((member) => {
+          const item = document.createElement("div");
+          item.className =
+            "member-item-admin flex justify-between items-center p-3 md:p-4 rounded-lg shadow";
+          item.innerHTML = `
+            <div class="flex items-center flex-grow overflow-hidden pr-2">
+                <img src="${member.image}" alt="${member.name}" class="h-10 w-10 rounded-full mr-4 object-cover flex-shrink-0">
+                <div class="overflow-hidden">
+                  <h4 class="text-md md:text-lg font-semibold text-white truncate" title="${member.name}">${member.name}</h4>
+                  <p class="text-xs md:text-sm text-gray-400 truncate" title="${member.quote}">${member.quote}</p>
+                </div>
+            </div>
+            <div class="flex-shrink-0 space-x-1 md:space-x-2">
+                <button onclick="window.openEditForm('${member.id}')" class="text-yellow-400 hover:text-yellow-300 font-medium py-1 px-2 md:px-3 text-xs md:text-sm rounded bg-yellow-600 bg-opacity-20 hover:bg-opacity-30">Edit</button>
+                <button onclick="window.confirmDeleteMember('${member.id}')" class="text-red-400 hover:text-red-300 font-medium py-1 px-2 md:px-3 text-xs md:text-sm rounded bg-red-600 bg-opacity-20 hover:bg-opacity-30">Hapus</button>
+            </div>
+          `;
+          memberListContainer.appendChild(item);
+        });
+      }
+
+      // Membuka modal untuk menambah
+      function openModalForAdd() {
+        currentEditId = null;
+        memberForm.reset();
+        memberEditIdInput.value = "";
+        modalTitleElement.textContent = "Tambah Member Baru";
+        document.getElementById("saveMemberButton").textContent = "Simpan";
+        memberImageInput.required = true;
+
+        const existingHelpText = document.getElementById("imageHelpText");
+        if (existingHelpText) existingHelpText.remove();
+
+        memberFormModal.classList.remove("hidden");
+      }
+
+      // Membuka modal untuk edit
+      window.openEditForm = function (memberId) {
+        const memberToEdit = membersData.find(
+          (m) => m.id.toString() === memberId.toString()
+        );
+        if (memberToEdit) {
+          currentEditId = memberId;
+          memberForm.reset();
+
+          memberEditIdInput.value = memberToEdit.id;
+          memberNameInput.value = memberToEdit.name;
+          memberQuoteInput.value = memberToEdit.quote;
+          memberDetailsInput.value = memberToEdit.details;
+
+          modalTitleElement.textContent = "Edit Member";
+          document.getElementById("saveMemberButton").textContent =
+            "Update Member";
+          memberImageInput.required = false;
+
+          const existingHelpText = document.getElementById("imageHelpText");
+          if (existingHelpText) existingHelpText.remove();
+
+          const helpText = document.createElement("small");
+          helpText.id = "imageHelpText";
+          helpText.className = "text-gray-400 text-xs mt-1 block";
+          helpText.textContent = "Kosongkan jika tidak ingin mengubah gambar.";
+          memberImageInput.parentElement.appendChild(helpText);
+
+          memberFormModal.classList.remove("hidden");
+        } else {
+          alert("Member tidak ditemukan!");
+        }
+      };
+
+      function closeModalForm() {
+        memberFormModal.classList.add("hidden");
+        currentEditId = null;
+        memberForm.reset();
+      }
+
+      openAddMemberModalBtn.addEventListener("click", openModalForAdd);
+      closeMemberFormModalBtn.addEventListener("click", closeModalForm);
+      cancelMemberFormBtn.addEventListener("click", closeModalForm);
+
+      // Event listener untuk submit form (Tambah atau Edit)
+      memberForm.addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        const formData = new FormData(memberForm);
+
+        let url = "/api/members";
+        let method = "POST";
+
+        if (currentEditId) {
+          url = `/api/members/${currentEditId}`;
+          method = "PUT";
+        }
+
+        const imageFile = memberImageInput.files[0];
+        if (currentEditId && !imageFile) {
+          formData.delete("memberImage");
+        }
+
+        try {
+          const response = await fetch(url, {
+            method: method,
+            body: formData,
+          });
+
+          const result = await response.json();
+
+          if (!response.ok) {
+            throw new Error(result.message || "Terjadi kesalahan pada server.");
+          }
+
+          alert(result.message);
+          loadMembersDataFromServer();
+          closeModalForm();
+        } catch (err) {
+          console.error("Gagal menyimpan:", err);
+          alert("Gagal menyimpan: " + err.message);
+        }
+      });
+
+      // Konfirmasi dan hapus member
+      window.confirmDeleteMember = async function (memberId) {
+        const memberToDelete = membersData.find(
+          (m) => m.id.toString() === memberId.toString()
+        );
+        if (!memberToDelete) return;
+
+        if (
+          confirm(
+            `Apakah Anda yakin ingin menghapus member "${memberToDelete.name}"?`
+          )
+        ) {
+          try {
+            const res = await fetch(`/api/members/${memberId}`, {
+              method: "DELETE",
+            });
+            const result = await res.json();
+            if (!res.ok) throw new Error(result.message);
+            alert(result.message);
+            loadMembersDataFromServer();
+          } catch (err) {
+            alert("Gagal menghapus: " + err.message);
+          }
+        }
+      };
+
+      // Inisialisasi Halaman
+      document.addEventListener("DOMContentLoaded", () => {
+        if (localStorage.getItem("isAdminLoggedIn") !== "true") {
+          alert("Anda harus login untuk mengakses halaman ini!");
+          window.location.href = "login.html";
+          return;
+        }
+        document.getElementById("currentYear").textContent =
+          new Date().getFullYear();
+        document
+          .getElementById("logoutButton")
+          .addEventListener("click", (e) => {
+            e.preventDefault();
+            localStorage.removeItem("isAdminLoggedIn");
+            alert("Anda telah berhasil logout.");
+            window.location.href = "login.html";
+          });
+        loadMembersDataFromServer();
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,81 @@
+@startuml
+
+class Website {
+  - header: Header
+  - main: Main
+  - footer: Footer
+  - bgVideo: Video
+  - bgMusic: Audio
+  - loginPage: LoginPage
+}
+
+class Header {
+  - logo: string
+  - navMenu: Nav
+  - socialIcons: List<Icon>
+}
+
+class Main {
+  - intro: Section
+  - portfolio: Section
+  - about: Section
+  - contact: Section
+}
+
+class Section {
+  - id: string
+  - content: string
+}
+
+class Video {
+  - src: string
+  - autoplay: boolean
+  - muted: boolean
+  - loop: boolean
+}
+
+class Audio {
+  - src: string
+  - autoplay: boolean
+  - loop: boolean
+  - muted: boolean
+}
+
+class Form {
+  - name: string
+  - email: string
+  - message: string
+  + submit(): void
+}
+
+class Admin {
+  - username: string
+  - password: string
+  + login(): boolean
+  + editContent(): void
+  + viewMessages(): List<Message>
+}
+
+class LoginPage {
+  - form: LoginForm
+  + authenticate(): Admin
+}
+
+class LoginForm {
+  - username: string
+  - password: string
+  + submit(): void
+}
+
+Website --> Header
+Website --> Main
+Website --> Footer
+Website --> Video
+Website --> Audio
+Website --> LoginPage
+Main --> Section
+ContactForm --> Form
+LoginPage --> LoginForm
+Admin --> Website
+
+@enduml

@@ -1,0 +1,29 @@
+					<!-- Admin Login -->
+					<section id="admin-login" class="five">
+						<div class="container">
+							<header>
+							<h2 class="text-white">Admin Login</h2>
+							</header>
+
+							<form id="login-form">
+							<div class="row">
+								<div class="max-w-md mx-auto mt-8">
+								<div class="col-6 col-12-mobile">
+								<input type="text" id="username" placeholder="Username" class="text-sm py-2 px-3 w-full mb-4 rounded border border-gray-300" />
+								</div>
+								<div class="col-6 col-12-mobile">
+								<input type="password" id="password" placeholder="Password" class="text-sm py-2 px-3 w-full mb-4 rounded border border-gray-300" />
+								</div>
+								<div class="col-12">
+								<input type="submit" value="Login" class="text-sm py-2 px-5 bg-green-500 text-white rounded hover:bg-green-600 cursor-pointer" />
+								</div>
+								<div class="col-12">
+								<p id="login-message" style="color: red; display: none;">Username atau Password salah!</p>
+								</div>
+								</div>
+							</div>
+							</form>
+						</div>
+					</section>
+
+			</div>

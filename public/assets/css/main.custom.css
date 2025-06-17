@@ -1,0 +1,36 @@
+/* Background video fix */
+#bg-video {
+    position: fixed;
+    top: 0;
+    left: 0;
+    min-width: 100%;
+    min-height: 100%;
+    object-fit: cover;
+    z-index: -1;
+    pointer-events: none; /* Biar gak ketahan klik sama video */
+  }
+  
+  /* Glass effect untuk section */
+  #main > section {
+    background: rgba(255, 255, 255, 0.2) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 5px;
+    box-shadow: 0 3px 2px 0 rgba(31, 38, 135, 0.37);
+  }
+  
+  /* Optional: Footer juga transparan kaca */
+  #footer {
+    background: rgba(255, 255, 255, 0.2) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(255,255,255,0.3);
+  }
+  
+  /* Optional: Header di mobile mode */
+  #header {
+    background: rgba(34, 38, 41, 0.7) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+  
