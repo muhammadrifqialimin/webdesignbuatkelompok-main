@@ -15,12 +15,13 @@
           100vh - 128px
         ); /* Tinggi viewport dikurangi tinggi header & footer */
       }
-      .member-item-admin {
+      /* Mengubah nama class agar lebih konsisten */
+      .admin-item {
         background-color: #1f2937;
         border: 1px solid #374151;
         transition: background-color 0.2s;
       }
-      .member-item-admin:hover {
+      .admin-item:hover {
         background-color: #374151;
       }
       #memberFormModal {
@@ -63,13 +64,13 @@
       <header class="mb-10 text-center">
         <h1 class="text-4xl font-bold text-white">Admin Dashboard</h1>
         <p class="text-lg text-gray-400 mt-2">
-          Selamat datang, Admin! Kelola member website dari sini.
+          Selamat datang, Admin! Kelola konten website dari sini.
         </p>
       </header>
 
       <section
         id="member-management"
-        class="bg-gray-800 p-6 rounded-lg shadow-xl"
+        class="bg-gray-800 p-6 rounded-lg shadow-xl mb-10"
       >
         <div
           class="flex justify-between items-center border-b border-gray-700 pb-3 mb-6"
@@ -84,6 +85,16 @@
         </div>
 
         <div id="adminMemberListContainer" class="space-y-3"></div>
+      </section>
+
+      <section
+        id="message-management"
+        class="bg-gray-800 p-6 rounded-lg shadow-xl"
+      >
+        <div class="border-b border-gray-700 pb-3 mb-6">
+          <h2 class="text-2xl font-semibold text-white">Pesan Masuk</h2>
+        </div>
+        <div id="messageListContainer" class="space-y-4"></div>
       </section>
     </main>
 
@@ -194,6 +205,7 @@
 
     <script>
       let membersData = [];
+      let messagesData = []; // PEMBARUAN: Variabel untuk data pesan
       let currentEditId = null;
 
       // Mengambil elemen-elemen DOM
@@ -215,7 +227,7 @@
         "cancelMemberFormBtn"
       );
 
-      // Memuat data member dari server
+      // --- FUNGSI UNTUK MEMBERS (Tidak ada perubahan) ---
       async function loadMembersDataFromServer() {
         try {
           const res = await fetch("/api/members");
@@ -228,7 +240,6 @@
         }
       }
 
-      // Merender daftar member ke halaman
       function renderAdminMemberList() {
         const memberListContainer = document.getElementById(
           "adminMemberListContainer"
@@ -241,14 +252,15 @@
         }
         membersData.forEach((member) => {
           const item = document.createElement("div");
+          // Menggunakan class .admin-item yang konsisten
           item.className =
-            "member-item-admin flex justify-between items-center p-3 md:p-4 rounded-lg shadow";
+            "admin-item flex justify-between items-center p-3 md:p-4 rounded-lg shadow";
           item.innerHTML = `
             <div class="flex items-center flex-grow overflow-hidden pr-2">
                 <img src="${member.image}" alt="${member.name}" class="h-10 w-10 rounded-full mr-4 object-cover flex-shrink-0">
                 <div class="overflow-hidden">
-                  <h4 class="text-md md:text-lg font-semibold text-white truncate" title="${member.name}">${member.name}</h4>
-                  <p class="text-xs md:text-sm text-gray-400 truncate" title="${member.quote}">${member.quote}</p>
+                    <h4 class="text-md md:text-lg font-semibold text-white truncate" title="${member.name}">${member.name}</h4>
+                    <p class="text-xs md:text-sm text-gray-400 truncate" title="${member.quote}">${member.quote}</p>
                 </div>
             </div>
             <div class="flex-shrink-0 space-x-1 md:space-x-2">
@@ -260,7 +272,6 @@
         });
       }
 
-      // Membuka modal untuk menambah
       function openModalForAdd() {
         currentEditId = null;
         memberForm.reset();
@@ -268,14 +279,11 @@
         modalTitleElement.textContent = "Tambah Member Baru";
         document.getElementById("saveMemberButton").textContent = "Simpan";
         memberImageInput.required = true;
-
         const existingHelpText = document.getElementById("imageHelpText");
         if (existingHelpText) existingHelpText.remove();
-
         memberFormModal.classList.remove("hidden");
       }
 
-      // Membuka modal untuk edit
       window.openEditForm = function (memberId) {
         const memberToEdit = membersData.find(
           (m) => m.id.toString() === memberId.toString()
@@ -283,26 +291,21 @@
         if (memberToEdit) {
           currentEditId = memberId;
           memberForm.reset();
-
           memberEditIdInput.value = memberToEdit.id;
           memberNameInput.value = memberToEdit.name;
           memberQuoteInput.value = memberToEdit.quote;
           memberDetailsInput.value = memberToEdit.details;
-
           modalTitleElement.textContent = "Edit Member";
           document.getElementById("saveMemberButton").textContent =
             "Update Member";
           memberImageInput.required = false;
-
           const existingHelpText = document.getElementById("imageHelpText");
           if (existingHelpText) existingHelpText.remove();
-
           const helpText = document.createElement("small");
           helpText.id = "imageHelpText";
           helpText.className = "text-gray-400 text-xs mt-1 block";
           helpText.textContent = "Kosongkan jika tidak ingin mengubah gambar.";
           memberImageInput.parentElement.appendChild(helpText);
-
           memberFormModal.classList.remove("hidden");
         } else {
           alert("Member tidak ditemukan!");
@@ -315,41 +318,25 @@
         memberForm.reset();
       }
 
-      openAddMemberModalBtn.addEventListener("click", openModalForAdd);
-      closeMemberFormModalBtn.addEventListener("click", closeModalForm);
-      cancelMemberFormBtn.addEventListener("click", closeModalForm);
-
-      // Event listener untuk submit form (Tambah atau Edit)
       memberForm.addEventListener("submit", async function (event) {
         event.preventDefault();
-
         const formData = new FormData(memberForm);
-
         let url = "/api/members";
         let method = "POST";
-
         if (currentEditId) {
           url = `/api/members/${currentEditId}`;
           method = "PUT";
         }
-
         const imageFile = memberImageInput.files[0];
         if (currentEditId && !imageFile) {
           formData.delete("memberImage");
         }
-
         try {
-          const response = await fetch(url, {
-            method: method,
-            body: formData,
-          });
-
+          const response = await fetch(url, { method: method, body: formData });
           const result = await response.json();
-
           if (!response.ok) {
             throw new Error(result.message || "Terjadi kesalahan pada server.");
           }
-
           alert(result.message);
           loadMembersDataFromServer();
           closeModalForm();
@@ -359,13 +346,11 @@
         }
       });
 
-      // Konfirmasi dan hapus member
       window.confirmDeleteMember = async function (memberId) {
         const memberToDelete = membersData.find(
           (m) => m.id.toString() === memberId.toString()
         );
         if (!memberToDelete) return;
-
         if (
           confirm(
             `Apakah Anda yakin ingin menghapus member "${memberToDelete.name}"?`
@@ -385,7 +370,99 @@
         }
       };
 
-      // Inisialisasi Halaman
+      // --- PEMBARUAN: Fungsionalitas untuk Pesan Masuk ---
+      async function loadMessagesFromServer() {
+        try {
+          const res = await fetch("/api/contacts");
+          if (!res.ok) throw new Error("Gagal mengambil data pesan");
+          messagesData = await res.json();
+          renderMessageList();
+        } catch (err) {
+          console.error(err);
+          alert("Tidak dapat memuat data pesan.");
+        }
+      }
+
+      function renderMessageList() {
+        const messageListContainer = document.getElementById(
+          "messageListContainer"
+        );
+        messageListContainer.innerHTML = "";
+        if (messagesData.length === 0) {
+          messageListContainer.innerHTML =
+            '<p class="text-gray-500 text-center">Belum ada pesan masuk.</p>';
+          return;
+        }
+        messagesData.forEach((msg) => {
+          const item = document.createElement("div");
+          item.className = "admin-item p-4 rounded-lg";
+          const formattedDate = new Date(msg.timestamp).toLocaleString(
+            "id-ID",
+            { dateStyle: "medium", timeStyle: "short" }
+          );
+          item.innerHTML = `
+            <div class="flex justify-between items-start">
+              <div>
+                <div class="flex items-center mb-2">
+                  <strong class="text-white mr-2">${msg.name}</strong>
+                  <span class="text-sm text-gray-400">&lt;${msg.email}&gt;</span>
+                </div>
+                <p class="text-gray-300 whitespace-pre-wrap">${msg.message}</p>
+              </div>
+              <div class="text-right flex-shrink-0 ml-4">
+                 <p class="text-xs text-gray-500 mb-2">${formattedDate}</p>
+                 <button onclick="window.confirmDeleteMessage('${msg.id}')" class="text-red-400 hover:text-red-300 font-medium py-1 px-3 text-xs rounded bg-red-600 bg-opacity-20 hover:bg-opacity-30">Hapus</button>
+              </div>
+            </div>
+          `;
+          messageListContainer.appendChild(item);
+        });
+      }
+
+      window.confirmDeleteMessage = async function (id) {
+        // Cek dulu apakah ini untuk member atau pesan
+        const memberToDelete = membersData.find(
+          (m) => m.id.toString() === id.toString()
+        );
+        if (memberToDelete) {
+          // Ini adalah penghapusan member
+          if (
+            confirm(
+              `Apakah Anda yakin ingin menghapus member "${memberToDelete.name}"?`
+            )
+          ) {
+            try {
+              const res = await fetch(`/api/members/${id}`, {
+                method: "DELETE",
+              });
+              const result = await res.json();
+              if (!res.ok) throw new Error(result.message);
+              alert(result.message);
+              loadMembersDataFromServer();
+            } catch (err) {
+              alert("Gagal menghapus member: " + err.message);
+            }
+          }
+        } else {
+          // Ini adalah penghapusan pesan
+          if (confirm("Apakah Anda yakin ingin menghapus pesan ini?")) {
+            try {
+              const res = await fetch(`/api/contacts/${id}`, {
+                method: "DELETE",
+              });
+              const result = await res.json();
+              if (!res.ok) throw new Error(result.message);
+              alert(result.message);
+              loadMessagesFromServer();
+            } catch (err) {
+              alert("Gagal menghapus pesan: " + err.message);
+            }
+          }
+        }
+      };
+      // --- Akhir Pembaruan ---
+
+      // --- Inisialisasi Halaman ---
       document.addEventListener("DOMContentLoaded", () => {
         if (localStorage.getItem("isAdminLoggedIn") !== "true") {
           alert("Anda harus login untuk mengakses halaman ini!");
@@ -402,7 +479,14 @@
             alert("Anda telah berhasil logout.");
             window.location.href = "login.html";
           });
+
+        openAddMemberModalBtn.addEventListener("click", openModalForAdd);
+        closeMemberFormModalBtn.addEventListener("click", closeModalForm);
+        cancelMemberFormBtn.addEventListener("click", closeModalForm);
+
+        // Memuat semua data saat halaman dibuka
         loadMembersDataFromServer();
+        loadMessagesFromServer(); // PEMBARUAN: Memuat data pesan juga
       });
     </script>
   </body>

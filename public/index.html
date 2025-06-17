@@ -151,28 +151,8 @@
         </h2>
         <div
           id="memberGrid"
-          class="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-5xl mx-auto"
-        >
-          <div
-            class="member-card bg-gray-100 rounded-2xl overflow-hidden shadow-xl"
-            data-member-name="Rifqy"
-            data-member-quote='"lah kirain pake ppt"'
-            data-member-image="assets/dawg-skull-emoji.gif"
-            data-member-details="Seorang yang penuh semangat dan selalu ingin tahu akan hal baru. Suka bereksperimen dengan teknologi terkini."
-          >
-            <img
-              src="assets/dawg-skull-emoji.gif"
-              alt="Rifqy"
-              class="w-full h-40 object-cover"
-            />
-            <div class="p-6">
-              <h3 class="text-2xl font-bold mb-3">Rifqy</h3>
-              <p class="text-gray-700 text-lg font-extrabold">
-                "lah kirain pake ppt"
-              </p>
-            </div>
-          </div>
-        </div>
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 max-w-6xl mx-auto"
+        ></div>
       </section>
 
       <section id="about" class="three">
@@ -207,7 +187,7 @@
           <p class="text-4xl mb-4 text-white">
             Contact disini jika ada keperluan!
           </p>
-          <form method="post" action="#">
+          <form id="contactForm" method="post" action="#">
             <div class="row">
               <div class="mx-auto">
                 <input
@@ -322,251 +302,218 @@
     <script src="assets/js/main.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
     <script>
-      // Di bagian script index.html
-      const defaultMembers = [
-        {
-          name: "Rifqy",
-          quote: '"lah kirain pake ppt"',
-          image: "assets/dawg-skull-emoji.gif",
-          details:
-            "Seorang yang penuh semangat dan selalu ingin tahu akan hal baru. Suka bereksperimen dengan teknologi terkini.",
-        },
-        {
-          name: "Damar",
-          quote: '"Throughout Heaven and Earth, I alone am honored"',
-          image: "assets/jjk-freaky.gif",
-          details:
-            "Pemikir strategis dengan pandangan yang mendalam. Kutipan favoritnya mencerminkan kepercayaan dirinya.",
-        },
-        {
-          name: "Alfian",
-          quote: '"im the man in the box 🥀"',
-          image: "assets/gus-gusfring.gif",
-          details:
-            "Dikenal dengan gayanya yang unik dan terkadang misterius. Selalu punya perspektif yang menarik.",
-        },
-        {
-          name: "Dipa",
-          quote: '"Ugh"',
-          image: "assets/rigbycat-rigby.gif",
-          details:
-            "Singkat, padat, dan jelas. Pribadi yang efisien dan tidak suka bertele-tele, seperti kutipannya.",
-        },
-        {
-          name: "Imron",
-          quote: '"nothin."',
-          image: "assets/wielino.png",
-          details:
-            "Tenang namun penuh dengan ide-ide brilian. Lebih suka tindakan nyata daripada banyak bicara.",
-        },
-        {
-          name: "Abiem",
-          quote: '"Yang Sudah Blh Pulang."',
-          image: "assets/budi.png",
-          details:
-            "Efisien dan selalu to the point. Fokus pada penyelesaian tugas dengan cepat dan tepat.",
-        },
-      ];
-
-      async function getMembersData() {
-        try {
-          const response = await fetch("/api/members");
-          const data = await response.json();
-          console.log("Data dari server:", data); // <- DEBUG
-          localStorage.setItem("membersData", JSON.stringify(data));
-          return data;
-        } catch (err) {
-          console.error("Fetch error:", err);
-          const fallback = localStorage.getItem("membersData");
-          if (fallback) return JSON.parse(fallback);
-          return defaultMembers;
-        }
-      }
-
-      function renderMembersToDOM(membersToRender) {
-        const memberGrid = document.getElementById("memberGrid");
-        if (!memberGrid) {
-          console.error("Elemen dengan ID 'memberGrid' tidak ditemukan!");
-          return;
-        }
-
-        memberGrid.innerHTML = ""; // Kosongkan grid sebelum mengisi
-
-        membersToRender.forEach((member) => {
-          const card = document.createElement("div");
-          card.className =
-            "member-card bg-gray-100 rounded-2xl overflow-hidden shadow-xl";
-          // Atur dataset untuk modal
-          card.dataset.memberName = member.name;
-          card.dataset.memberQuote = member.quote;
-          card.dataset.memberImage = member.image;
-          card.dataset.memberDetails = member.details;
-
-          card.innerHTML = `
-            <img src="${member.image}" alt="${member.name}" class="w-full h-40 object-cover">
-            <div class="p-6">
-              <h3 class="text-2xl font-bold mb-3">${member.name}</h3>
-              <p class="text-gray-700 text-lg font-extrabold">${member.quote}</p>
-            </div>
-          `;
-
-          memberGrid.appendChild(card);
-        });
-      }
-
-      // Background Music Mute Button
-      const music = document.getElementById("bg-music");
-      const muteBtn = document.getElementById("mute-btn");
-      if (music && muteBtn) {
-        music.volume = 0.2;
-        muteBtn.addEventListener("click", function () {
-          if (music.muted) {
-            music.muted = false;
-            muteBtn.textContent = "🔈";
-          } else {
-            music.muted = true;
-            muteBtn.textContent = "🔇";
-          }
-        });
-      }
-
-      document.addEventListener("DOMContentLoaded", async () => {
-        const membersData = await getMembersData(); // ✅ tunggu data diambil dulu
-        renderMembersToDOM(membersData); // ✅ baru render pas data udah siap
-
-        // Setelah card selesai dirender, baru ambil ulang elemen DOM-nya
-        const memberCards = document.querySelectorAll(".member-card");
-        const modal = document.getElementById("memberModal");
-        const closeModalBtn = document.getElementById("closeModalBtn");
-
-        const modalMemberName = document.getElementById("modalMemberName");
-        const modalMemberImage = document.getElementById("modalMemberImage");
-        const modalMemberQuote = document.getElementById("modalMemberQuote");
-        const modalMemberDetails =
-          document.getElementById("modalMemberDetails");
-
-        if (
-          !modal ||
-          !closeModalBtn ||
-          !modalMemberName ||
-          !modalMemberImage ||
-          !modalMemberQuote ||
-          !modalMemberDetails
-        ) {
-          console.error("Salah satu elemen modal tidak ditemukan!");
-          return;
-        }
-
-        // Pasang event listener setelah elemen member-card dirender
-        memberCards.forEach((card) => {
-          card.addEventListener("click", () => {
-            modalMemberName.textContent = card.dataset.memberName;
-            modalMemberImage.src = card.dataset.memberImage;
-            modalMemberQuote.textContent = card.dataset.memberQuote;
-            modalMemberDetails.textContent = card.dataset.memberDetails;
-
-            modal.classList.remove("hidden");
-          });
-        });
-
-        closeModalBtn.addEventListener("click", () => {
-          modal.classList.add("hidden");
-        });
-      });
-
-      // Member Modal Functionality
       document.addEventListener("DOMContentLoaded", () => {
-        // Initialize members data
-        const membersData = getMembersData();
-        renderMembersToDOM(membersData); // Render data dari localStorage
+        // --- DATA & RENDER MEMBERS ---
+        const defaultMembers = [
+          {
+            name: "Rifqy",
+            quote: '"lah kirain pake ppt"',
+            image: "assets/dawg-skull-emoji.gif",
+            details:
+              "Seorang yang penuh semangat dan selalu ingin tahu akan hal baru. Suka bereksperimen dengan teknologi terkini.",
+          },
+          {
+            name: "Damar",
+            quote: '"Throughout Heaven and Earth, I alone am honored"',
+            image: "assets/jjk-freaky.gif",
+            details:
+              "Pemikir strategis dengan pandangan yang mendalam. Kutipan favoritnya mencerminkan kepercayaan dirinya.",
+          },
+          {
+            name: "Alfian",
+            quote: '"im the man in the box 🥀"',
+            image: "assets/gus-gusfring.gif",
+            details:
+              "Dikenal dengan gayanya yang unik dan terkadang misterius. Selalu punya perspektif yang menarik.",
+          },
+          {
+            name: "Dipa",
+            quote: '"Ugh"',
+            image: "assets/rigbycat-rigby.gif",
+            details:
+              "Singkat, padat, dan jelas. Pribadi yang efisien dan tidak suka bertele-tele, seperti kutipannya.",
+          },
+          {
+            name: "Imron",
+            quote: '"nothin."',
+            image: "assets/wielino.png",
+            details:
+              "Tenang namun penuh dengan ide-ide brilian. Lebih suka tindakan nyata daripada banyak bicara.",
+          },
+          {
+            name: "Abiem",
+            quote: '"Yang Sudah Blh Pulang."',
+            image: "assets/budi.png",
+            details:
+              "Efisien dan selalu to the point. Fokus pada penyelesaian tugas dengan cepat dan tepat.",
+          },
+        ];
 
-        // Pindahkan query selector dan event listener modal ke sini SETELAH renderMembersToDOM
-        // agar listener terpasang pada elemen yang baru dibuat.
-        const memberCards = document.querySelectorAll(".member-card");
-        const modal = document.getElementById("memberModal");
-        const closeModalBtn = document.getElementById("closeModalBtn");
-
-        const modalMemberName = document.getElementById("modalMemberName");
-        const modalMemberImage = document.getElementById("modalMemberImage");
-        const modalMemberQuote = document.getElementById("modalMemberQuote");
-        const modalMemberDetails =
-          document.getElementById("modalMemberDetails");
-
-        if (
-          !modal ||
-          !closeModalBtn ||
-          !modalMemberName ||
-          !modalMemberImage ||
-          !modalMemberQuote ||
-          !modalMemberDetails
-        ) {
-          console.error("Salah satu elemen modal tidak ditemukan!");
-          return;
+        async function getMembersData() {
+          try {
+            const response = await fetch("/api/members");
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            localStorage.setItem("membersData", JSON.stringify(data));
+            return data;
+          } catch (err) {
+            console.error("Gagal mengambil data dari server:", err);
+            const fallback = localStorage.getItem("membersData");
+            if (fallback) {
+              console.log("Menggunakan data fallback dari localStorage.");
+              return JSON.parse(fallback);
+            }
+            console.log("Menggunakan data default.");
+            return defaultMembers;
+          }
         }
 
-        memberCards.forEach((card) => {
-          card.addEventListener("click", () => {
-            const name = card.dataset.memberName;
-            const image = card.dataset.memberImage;
-            const quote = card.dataset.memberQuote;
-            const details = card.dataset.memberDetails;
-
-            modalMemberName.textContent = name;
-            modalMemberImage.src = image;
-            modalMemberImage.alt = name;
-            modalMemberQuote.textContent = quote;
-            modalMemberDetails.textContent = details;
-
-            modal.classList.remove("hidden");
-            document.body.style.overflow = "hidden";
+        function renderMembersToDOM(membersToRender) {
+          const memberGrid = document.getElementById("memberGrid");
+          if (!memberGrid) return;
+          memberGrid.innerHTML = "";
+          membersToRender.forEach((member) => {
+            const card = document.createElement("div");
+            card.className =
+              "member-card bg-gray-100 rounded-2xl overflow-hidden shadow-xl transform hover:scale-105 transition-transform duration-300";
+            card.dataset.memberName = member.name;
+            card.dataset.memberQuote = member.quote;
+            card.dataset.memberImage = member.image;
+            card.dataset.memberDetails = member.details;
+            card.innerHTML = `
+              <img src="${member.image}" alt="${member.name}" class="w-full h-40 object-cover">
+              <div class="p-6">
+                <h3 class="text-2xl font-bold mb-3">${member.name}</h3>
+                <p class="text-gray-700 text-lg font-extrabold">${member.quote}</p>
+              </div>`;
+            memberGrid.appendChild(card);
           });
-        });
-
-        function closeModal() {
-          modal.classList.add("hidden");
-          document.body.style.overflow = "";
+          setupModalListeners();
         }
 
-        closeModalBtn.addEventListener("click", closeModal);
+        // --- MODAL LOGIC ---
+        function setupModalListeners() {
+          const memberCards = document.querySelectorAll(".member-card");
+          const modal = document.getElementById("memberModal");
+          const closeModalBtn = document.getElementById("closeModalBtn");
+          const modalMemberName = document.getElementById("modalMemberName");
+          const modalMemberImage = document.getElementById("modalMemberImage");
+          const modalMemberQuote = document.getElementById("modalMemberQuote");
+          const modalMemberDetails =
+            document.getElementById("modalMemberDetails");
 
-        modal.addEventListener("click", (event) => {
-          if (event.target === modal) {
-            closeModal();
+          if (!modal || !closeModalBtn) return;
+
+          function closeModal() {
+            modal.classList.add("hidden");
+            document.body.style.overflow = "";
           }
-        });
 
-        document.addEventListener("keydown", (event) => {
-          if (event.key === "Escape" && !modal.classList.contains("hidden")) {
-            closeModal();
-          }
-        });
+          memberCards.forEach((card) => {
+            card.addEventListener("click", () => {
+              modalMemberName.textContent = card.dataset.memberName;
+              modalMemberImage.src = card.dataset.memberImage;
+              modalMemberQuote.textContent = card.dataset.memberQuote;
+              modalMemberDetails.textContent = card.dataset.memberDetails;
+              modal.classList.remove("hidden");
+              document.body.style.overflow = "hidden";
+            });
+          });
 
-        // --- Script untuk Tombol Admin Tersembunyi ---
+          closeModalBtn.addEventListener("click", closeModal);
+          modal.addEventListener(
+            "click",
+            (e) => e.target === modal && closeModal()
+          );
+          document.addEventListener(
+            "keydown",
+            (e) =>
+              e.key === "Escape" &&
+              !modal.classList.contains("hidden") &&
+              closeModal()
+          );
+        }
+
+        // --- BACKGROUND MUSIC & MUTE BUTTON ---
+        const music = document.getElementById("bg-music");
+        const muteBtn = document.getElementById("mute-btn");
+        if (music && muteBtn) {
+          music.volume = 0.2;
+          muteBtn.addEventListener("click", () => {
+            music.muted = !music.muted;
+            muteBtn.textContent = music.muted ? "🔇" : "🔈";
+          });
+        }
+
+        // --- HIDDEN ADMIN BUTTON ---
         let keySequence = [];
-        // Urutan tombol: 'a', 'd', 'm', 'i', 'n' (semua huruf kecil)
         const adminCode = ["a", "d", "m", "i", "n"];
-
-        document.addEventListener("keydown", function (event) {
-          const key = event.key.toLowerCase(); // Ambil tombol yang ditekan & ubah ke huruf kecil
-
+        document.addEventListener("keydown", (event) => {
+          const key = event.key.toLowerCase();
           if (key.length === 1 && key >= "a" && key <= "z") {
             keySequence.push(key);
-          }
-
-          keySequence = keySequence.slice(-adminCode.length);
-
-          if (
-            keySequence.length === adminCode.length &&
-            keySequence.every((val, index) => val === adminCode[index])
-          ) {
-            const hiddenBtn = document.getElementById("hiddenAdminLoginBtn");
-            if (hiddenBtn) {
-              hiddenBtn.style.display = "inline-block"; // Tampilkan tombol
+            keySequence = keySequence.slice(-adminCode.length);
+            if (JSON.stringify(keySequence) === JSON.stringify(adminCode)) {
+              document.getElementById("hiddenAdminLoginBtn").style.display =
+                "inline-block";
+              keySequence = [];
             }
-            keySequence = []; // Reset urutan setelah berhasil
           }
         });
-        // --- Akhir Script Tombol Admin Tersembunyi ---
+
+        // --- CONTACT FORM FUNCTIONALITY ---
+        const contactForm = document.getElementById("contactForm");
+        if (contactForm) {
+          contactForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            const name = contactForm.querySelector('[name="name"]').value;
+            const email = contactForm.querySelector('[name="email"]').value;
+            const message = contactForm.querySelector('[name="message"]').value;
+
+            // Validasi format email menggunakan Regex
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(email)) {
+              alert(
+                "Format email tidak valid. Harap gunakan format seperti 'email@domain.com'."
+              );
+              return;
+            }
+
+            if (!name || !email || !message) {
+              alert("Harap isi semua kolom sebelum mengirim.");
+              return;
+            }
+
+            try {
+              const response = await fetch("/api/contact", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name, email, message }),
+              });
+
+              const result = await response.json();
+              alert(result.message);
+
+              if (result.success) {
+                contactForm.reset();
+              }
+            } catch (error) {
+              console.error("Error submitting contact form:", error);
+              alert("Gagal terhubung ke server. Silakan coba lagi.");
+            }
+          });
+        }
+
+        // --- INITIALIZE PAGE ---
+        async function init() {
+          const membersData = await getMembersData();
+          renderMembersToDOM(membersData);
+        }
+
+        init();
       });
     </script>
   </body>

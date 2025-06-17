@@ -1,15 +1,25 @@
-@startuml
+@startuml Website Biografi
 left to right direction
 
 actor Pengunjung
+actor Admin
 
-rectangle Website {
+rectangle Website_Biografi {
     Pengunjung -- (Intro)
     Pengunjung -- (Members)
     Pengunjung -- (About)
     Pengunjung -- (Contact)
     Pengunjung -- (Play/Mute Musik)
-    (Contact) <.. (Kirim Pesan) : <<extend>>
 
+    Admin -- (Login)
+    
+
+
+    (Login) <.. (Logout) : <<extend>>
+    (Login) ..> (Tambah Member) : <<extend>>
+    (Login) ..> (Hapus Member) : <<extend>>
+    (Login) ..> (Edit Member) : <<extend>>
+    
 }
+
 @enduml
