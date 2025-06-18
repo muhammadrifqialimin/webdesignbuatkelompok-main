@@ -12,14 +12,12 @@ rectangle Website_Biografi {
     Pengunjung -- (Play/Mute Musik)
 
     Admin -- (Login)
-    
-
 
     (Login) <.. (Logout) : <<extend>>
-    (Login) ..> (Tambah Member) : <<extend>>
-    (Login) ..> (Hapus Member) : <<extend>>
-    (Login) ..> (Edit Member) : <<extend>>
-    
+    (Login) <.. (Tambah Member) : <<extend>>
+    (Login) <.. (Hapus Member) : <<extend>>
+    (Login) <.. (Edit Member) : <<extend>>
+    (Login) <.. (Hapus Pesan Masuk) : <<extend>>
 }
 
 @enduml

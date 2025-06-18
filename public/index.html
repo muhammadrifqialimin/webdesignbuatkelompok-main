@@ -26,12 +26,7 @@
     </style>
   </head>
   <body class="is-preload">
-    <audio
-      id="bg-music"
-      src="assets/audio/newhorizomn.mp3"
-      autoplay
-      loop
-    ></audio>
+    <audio id="bg-music" src="assets/audio/newhorizomn.mp3" loop></audio>
 
     <button
       id="mute-btn"
@@ -436,11 +431,48 @@
           );
         }
 
-        // --- BACKGROUND MUSIC & MUTE BUTTON ---
+        // --- BACKGROUND MUSIC & MUTE BUTTON (KODE BARU) ---
         const music = document.getElementById("bg-music");
         const muteBtn = document.getElementById("mute-btn");
+
         if (music && muteBtn) {
-          music.volume = 0.2;
+          // Atur volume ke level maksimal (1.0 = 100%)
+          music.volume = 1.0;
+
+          // Fungsi untuk mencoba memutar musik
+          const playMusic = () => {
+            const playPromise = music.play();
+
+            if (playPromise !== undefined) {
+              playPromise
+                .then((_) => {
+                  // Berhasil diputar secara otomatis
+                  music.muted = false; // Pastikan musik tidak di-mute
+                  muteBtn.textContent = "🔈";
+                })
+                .catch((error) => {
+                  // Gagal diputar otomatis, kita tunggu interaksi pengguna
+                  console.log(
+                    "Autoplay musik diblokir. Menunggu interaksi pengguna untuk memulai."
+                  );
+                  // Tambahkan event listener untuk klik pertama, setelah itu akan dihapus
+                  document.body.addEventListener(
+                    "click",
+                    () => {
+                      music.play();
+                      music.muted = false;
+                      muteBtn.textContent = "🔈";
+                    },
+                    { once: true }
+                  ); // Opsi 'once: true' membuat listener ini hanya berjalan sekali
+                });
+            }
+          };
+
+          // Coba putar musik saat halaman siap
+          playMusic();
+
+          // Logika untuk tombol mute/unmute tetap sama
           muteBtn.addEventListener("click", () => {
             music.muted = !music.muted;
             muteBtn.textContent = music.muted ? "🔇" : "🔈";
