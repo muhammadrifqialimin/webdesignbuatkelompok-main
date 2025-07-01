@@ -1,4 +1,4 @@
-@startuml
+@startuml website Geografi
 
 class Website {
   - header: Header
